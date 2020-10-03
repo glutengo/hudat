@@ -66,24 +66,51 @@ class HistoryScreenState extends State<HistoryScreen> {
     );
   }
 
+  ListView buildListView(BuildContext context) {
+    return ListView.builder(
+        itemBuilder: (BuildContext context, int index) => PictureListItem(
+              picture: _pictures[index],
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          DisplayPictureScreen(picture: _pictures[index]))),
+              onDelete: () => this._showDeleteDialog(_pictures[index]),
+              color: index % 2 == 0
+                  ? Color.fromRGBO(0, 0, 0, 0.0)
+                  : Color.fromRGBO(255, 255, 255, 0.05),
+            ),
+        itemCount: _pictures.length);
+  }
+
+  Center buildWelcomeMessage(BuildContext context) {
+    return Center(
+      child: Padding(
+          padding: EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                "Hello there! 👋",
+                style: TextStyle(fontSize: 32.0),
+                textAlign: TextAlign.center,),
+              SizedBox(height: 16.0,),
+              Text(
+                "It seems like you have not taken any pictures yet. Get started by tapping the camera icon!",
+                style: TextStyle(fontSize: 24.0),
+                textAlign: TextAlign.center,)
+            ],
+          ))
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Center(child: Text('hudat'))),
-      body: ListView.builder(
-          itemBuilder: (BuildContext context, int index) => PictureListItem(
-                picture: _pictures[index],
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            DisplayPictureScreen(picture: _pictures[index]))),
-                onDelete: () => this._showDeleteDialog(_pictures[index]),
-                color: index % 2 == 0
-                    ? Color.fromRGBO(0, 0, 0, 0.0)
-                    : Color.fromRGBO(255, 255, 255, 0.05),
-              ),
-          itemCount: _pictures.length),
+      body: _pictures.length > 0
+          ? buildListView(context)
+          : buildWelcomeMessage(context),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.camera_alt),
         onPressed: () {
